@@ -51,12 +51,12 @@ int mostrarPrdKmAsc (double m[8][5], string c[8], string p[5], int x){
         z[i]=m[x][i];
     } //copio en un vector los kilometros de cada producto del cliente
     for (int i=0; i<5; i++){
-        double aux;
+        double aux1;
         for (int j=0; j<4; j++){
             if (z[j]>z[j+1]){
-                aux=z[j];
+                aux1=z[j];
                 z[j]=z[j+1];
-                z[j+1]=aux;
+                z[j+1]=aux1;
             }
         }
     } // ordeno de menor a mayor el vector
@@ -65,7 +65,7 @@ int mostrarPrdKmAsc (double m[8][5], string c[8], string p[5], int x){
     for(int i=0; i<5; i++){
         for (int j=0; j<5; j++){
             if (z[i]==m[x][j]){
-                cout << p[i] << " - " << z[i] << "km" << endl;
+                cout << p[j] << " - " << z[i] << "km" << endl;
                 r = j; // r será el producto con mayor cantidad de kilómetros recorridos que nos sirve para el pto 3
             }
         }
@@ -85,15 +85,15 @@ int main(){
     double peso[8][5]={};
     double distancia[8][5]={};
     int entregas[5]={};
-    do
-    {
+    while (archidatos){
         int c, pr;
         double pe, d;
         archidatos >> c >> pr >> pe >> d;
         peso[c][pr]= peso[c][pr] + pe;
         distancia[c][pr]=distancia[c][pr] + d;
         entregas[pr]= entregas[pr]+1;
-    } while (archidatos);
+        pr=5; 
+    }
     archidatos.close();
     ifstream archinombres;
     archinombres.open("Nombres.txt");
@@ -111,10 +111,10 @@ int main(){
         archinombres >> productos[i];
     }
     archinombres.close();
+
     mayoresA(peso,clientes,productos,13000);
     int x = clienteConMayorA(peso,13000);
     int y = mostrarPrdKmAsc(distancia, clientes, productos, x);
-    cout << entregas[3] << endl;
-    cout << "Cantidad de entregas para el tipo de producto " << productos[y] << ": " << entregas[y] << endl;
+    cout << endl << "Punto 3:" << endl << "Cantidad de entregas para el tipo de producto " << productos[y] << ": " << entregas[y] << endl;
     return 0;
 }
