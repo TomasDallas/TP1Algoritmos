@@ -1,0 +1,120 @@
+#include <iostream>
+#include <fstream>
+using namespace std;
+
+void mostrar(double m[8][5]){
+    for (int i=0; i<8; i++){
+        for (int j=0; j<5; j++){
+            cout << m[i][j] << " ";
+        }
+        cout << endl;
+    }
+}
+
+void mayoresA(double m[8][5], string c[8], string p[5], double x){
+    cout << "Punto 1: " << endl << "Clientes con sus productos superiores a " << x << "kg" << endl;
+    for (int i=0; i<8; i++){
+        cout << c[i] << ": " ;
+        for (int j=0; j<5; j++){
+            if (m[i][j]>x){
+                cout << p[j] << " ";
+            }
+        }
+        cout << endl;
+    }
+    cout << endl;
+}
+
+int clienteConMayorA (double m[8][5], double x){
+    int a;
+    int y=0;
+    for (int i=0; i<8; i++){
+        int z=0;
+        for (int j=0; j<5; j++){
+            if (m[i][j]>x){
+                z++;
+            }
+        }
+        if(z>y){
+            y=z;
+            a=i;
+        }
+    }
+    return a;
+}
+
+int mostrarPrdKmAsc (double m[8][5], string c[8], string p[5], int x){
+    int r;
+    cout << "Punto 2:" << endl;
+    double z[5];
+    for (int i=0; i<5; i++){
+        z[i]=m[x][i];
+    } //copio en un vector los kilometros de cada producto del cliente
+    for (int i=0; i<5; i++){
+        double aux;
+        for (int j=0; j<4; j++){
+            if (z[j]>z[j+1]){
+                aux=z[j];
+                z[j]=z[j+1];
+                z[j+1]=aux;
+            }
+        }
+    } // ordeno de menor a mayor el vector
+    cout << "Cliente con mayor cantidad de productos que hayan superado 13000kg: " << c[x] << endl;
+    cout << "Productos ordenados de menor a mayor cantidad de km recorridos:" << endl;
+    for(int i=0; i<5; i++){
+        for (int j=0; j<5; j++){
+            if (z[i]==m[x][j]){
+                cout << p[i] << " - " << z[i] << "km" << endl;
+                r = j; // r será el producto con mayor cantidad de kilómetros recorridos que nos sirve para el pto 3
+            }
+        }
+    }
+    return r;
+}
+
+
+int main(){
+    ifstream archidatos;
+    archidatos.open("Datos.txt");
+    if (!archidatos) 
+    {
+        cout << "Error al abrir el archivo" << endl;
+        return 1;
+    }
+    double peso[8][5]={};
+    double distancia[8][5]={};
+    int entregas[5]={};
+    do
+    {
+        int c, pr;
+        double pe, d;
+        archidatos >> c >> pr >> pe >> d;
+        peso[c][pr]= peso[c][pr] + pe;
+        distancia[c][pr]=distancia[c][pr] + d;
+        entregas[pr]= entregas[pr]+1;
+    } while (archidatos);
+    archidatos.close();
+    ifstream archinombres;
+    archinombres.open("Nombres.txt");
+    if (!archinombres) 
+    {
+        cout << "Error al abrir el archivo" << endl;
+        return 1;
+    }
+    string clientes[8];
+    string productos[5];
+    for(int i=0; i<8; i++){
+        archinombres >> clientes[i];
+    }
+    for(int i=0; i<5; i++){
+        archinombres >> productos[i];
+    }
+    archinombres.close();
+    mayoresA(peso,clientes,productos,13000);
+    int x = clienteConMayorA(peso,13000);
+    int y = mostrarPrdKmAsc(distancia, clientes, productos, x);
+    cout << entregas[3] << endl;
+    cout << "Cantidad de entregas para el tipo de producto " << productos[y] << ": " << entregas[y] << endl;
+    return 0;
+}
